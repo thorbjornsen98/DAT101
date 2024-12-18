@@ -171,10 +171,10 @@ function calculateNetPrice(gross, vatGroup) {
     printOut(gross + " is " + net.toFixed(2) + " without tax(" + vatGroup + ")" )
 }
 
-console.log(calculateNetPrice(125, 'normal'));
-console.log(calculateNetPrice(115, 'food'));
-console.log(calculateNetPrice(110, 'cinema'));
-console.log(calculateNetPrice(100, 'Jet fuel'));
+calculateNetPrice(125, 'normal');
+calculateNetPrice(115, 'food');
+calculateNetPrice(110, 'cinema');
+calculateNetPrice(100, 'Jet fuel');
 
 
 
@@ -184,21 +184,38 @@ printOut("--- Part 7 -----------------------------------------------------------
 /* Put your code below here!*/
 
 function calculateSpeedDistanceTime(distance, time, speed) {
-    if (speed === undefined) return distance / time;
-    if (time === undefined) return distance / speed;
-    if (distance === undefined) return speed * time;
+    if (speed === undefined && distance !== undefined && time !== undefined) {
+        return printOut("Speed: " + (distance / time) + "km/h" ) +
+               printOut("Distance: " + distance + "km") + 
+               printOut("Time: " + time + " hours") + printOut(newLine)
+    }
+    if (time === undefined && distance !== undefined && speed !== undefined) {
+        return + 
+        printOut("Speed: " + speed + "km/h" ) + 
+        printOut("Distance: " + distance + "km") + 
+        printOut("Time: " + (distance / speed) + " hours") + printOut(newLine)
+    
+    }
+    if (distance === undefined && time !== undefined && speed !== undefined) {
+        return +
+        printOut("Speed: " + speed + "km/h" ) + 
+        printOut("Distance: " + (speed * time) + "km") + 
+        printOut("Time: " + time + " hours") + printOut(newLine)
+    
+    }
 
-printOut("Speed: " + speed + "km/h")
-printOut("Time: " + time + "hours")
-printOut("Distance: " + distance + "km")
+    return +
+    printOut("Speed: " + speed + " km/h" ) + 
+    printOut("Distance: " + distance + " km") + 
+    printOut("Time: " + time + " hours") 
+
 
 }
 
-
-console.log(calculateSpeedDistanceTime(100, 2, undefined)); // Calculate speed
-console.log(calculateSpeedDistanceTime(100, undefined, 50)); // Calculate time
-console.log(calculateSpeedDistanceTime(undefined, 2, 50));   // Calculate distance
-console.log(calculateSpeedDistanceTime(undefined, undefined, 50)); // Invalid
+calculateSpeedDistanceTime(125, 2, undefined);
+calculateSpeedDistanceTime(70, undefined, 50);
+calculateSpeedDistanceTime(undefined, 5, 55);
+calculateSpeedDistanceTime(undefined, undefined, 120);
 
 
 
@@ -210,16 +227,105 @@ printOut(newLine);
 
 printOut("--- Part 8 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-printOut("Replace this with you answer!");
+
+function adjustText(text, maxSize, char, insertAtEnd) {
+   
+    if (typeof text !== "string" || typeof char !== "string" || char.length !== 1 || typeof insertAtEnd !== "boolean") {
+        return "Invalid input. Please provide valid parameters.";
+    }
+
+    const charactersNeeded = maxSize - text.length; 
+    const padding = char.repeat(charactersNeeded); 
+
+    const result = insertAtEnd ? text + padding : padding + text; 
+
+    printOut(result) + printOut(newLine); 
+    return result; 
+}
+
+
+adjustText("Text" , 40 , "." , true)
+adjustText("hello" , 40, "." , false)
+
+
+
 printOut(newLine);
 
 printOut("--- Part 9 ----------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-printOut("Replace this with you answer!");
+// Ikke gjort denne oppgaven ferdig //
+
+
+function testIfMathIsFun() {
+    let op = 1;
+    let line = 1;
+    
+    
+    let ok = false;
+    do {
+      let sumLeft = 0;
+      for (let left = 0; left < line + 1; left++) {
+        sumLeft += op;
+        op++;
+      }
+  
+      let sumRight = 0;
+      for (let right = 0; right < line; right++) {
+        sumRight += op;
+        op++;
+      }
+  
+      if (sumLeft !== sumRight) {
+        ok = false;
+        printOut("Error in line " + line.toString());
+      }else{
+        ok = true;
+      }
+      line++;
+  
+      if(line > 200){
+        printOut("Math is Fun!");
+        break;
+      }
+      
+    } while (ok);
+  }
+
+  testIfMathIsFun();
+  printOut(" ");
+
+
+
+
+  
 printOut(newLine);
 
 /* Task 10*/
 printOut("--- Part 10 ---------------------------------------------------------------------------------------------");
 /* Put your code below here!*/
-printOut("Replace this with you answer!");
+
+function factorial(n) {
+    // Base case: Factorial of 0 or 1 is 1
+    if (n === 0 || n === 1) {
+        return 1;
+    }
+    // Recursive case: n * factorial of (n - 1)
+    return n * factorial(n - 1);
+}
+
+// Function to print factorial
+function printFactorial(num) {
+    if (num < 0) {
+        console.log("Factorial is not defined for negative numbers.");
+    } else {
+        const result = factorial(num);
+        printOut("Factorial of " + num + " is " + result);
+        
+    }
+}
+
+printFactorial(10);
+
+
+
 printOut(newLine);
