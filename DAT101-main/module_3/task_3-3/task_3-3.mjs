@@ -305,15 +305,12 @@ printOut("--- Part 10 ----------------------------------------------------------
 /* Put your code below here!*/
 
 function factorial(n) {
-    // Base case: Factorial of 0 or 1 is 1
     if (n === 0 || n === 1) {
         return 1;
     }
-    // Recursive case: n * factorial of (n - 1)
     return n * factorial(n - 1);
 }
 
-// Function to print factorial
 function printFactorial(num) {
     if (num < 0) {
         console.log("Factorial is not defined for negative numbers.");
