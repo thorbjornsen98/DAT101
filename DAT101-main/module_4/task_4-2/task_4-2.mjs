@@ -38,14 +38,6 @@ function everyWord(aWord, aIndex){
 
 printOut("");
 
-words.forEach(eachWord);
-function eachWord(aWord, aIndex){
-  printOut(aIndex + " " + (aIndex + 1) + " " + aWord);
-}
-
-
-printOut("");
-
 
 printOut(newLine);
 
@@ -112,9 +104,9 @@ class TBook{
   }
 
   const books = [
-    new TBook("The Hobbit", "J.R.R. Tolkien", "978-0-395-07122-1"),
-    new TBook("The Shining", "Stephen King", "978-0-385-12167-5"),
-    new TBook("The Da Vinci Code", "Dan Brown", "978-0-385-50420-5")
+    new TBook("The Old Man and the Sea", "Ernest Hemingway", "978-1-9075-9027-6"),
+    new TBook("Harry Potter and the Deathly Hallows", "J. K. Rowling", "0-7475-9105-9"),
+    new TBook("1984", "George Orwell", "978-0-140-81774-4")
   ];
   
   books.forEach(printBook);
