@@ -94,51 +94,74 @@ const CarTypes = [
   { value: 13, caption: "Nissan" },
 ];
 
-text = " "
 
-
-
- const keys = Object.keys(CarTypes); 
-
-  for(let index = 0; index < keys.length; index++){
-    
-    const key = keys[index];
-    const { value, caption } = CarTypes[key];
-    const x = document.createElement("divTask4Cars");
-   
-    
-    text +=    caption + newLine
-    document.getElementById("divTask4Cars").innerHTML = " " + text;
-
-
-   
-  }
-  text = " "
-  text += "you have chosen" 
-
-  document.getElementById("txtTask4Output").innerHTML = text
-
-
-
-
+  
+const divTask4Cars = document.getElementById('divTask4Cars');
+const txtTask4Output = document.getElementById('txtTask4Output');
+  
+  CarTypes.forEach(car => {
+    const radioButton = document.createElement('input');
+          radioButton.type = 'radio';
+          radioButton.name = 'car';
+          radioButton.value = car.caption;
+          radioButton.id = `car${car.value}`;
+  
+          const label = document.createElement('label');
+          label.htmlFor = radioButton.id;
+          label.textContent = car.caption;
+  
+              divTask4Cars.appendChild(radioButton);
+              divTask4Cars.appendChild(label);
+              divTask4Cars.appendChild(document.createElement('br'));
+  
+              radioButton.addEventListener('change', () => {
+                  txtTask4Output.textContent = `Selected car: ${car.caption}`;
+              });
+});
 
 
 
 //--- Part 5 ----------------------------------------------------------------------------------------------
 /* Put your code below here!*/
-text = " test "
 
 
-function valueChange5(){
 
-  document.getElementById("txtTask5Output").innerHTML = text
 
-}
-document.getElementById("txtTask5Output").innerHTML = text
+const selectTask5Animals = document.getElementById('selectTask5Animals');
+const txtTask5Output = document.getElementById('txtTask5Output');
+
+selectTask5Animals.addEventListener('change', function() {
+    const selectedAnimal = selectTask5Animals.options[selectTask5Animals.selectedIndex].text;
+    txtTask5Output.textContent = `Selected animal: ${selectedAnimal}`;
+});
+
+
+
+
+
+
+
 //--- Part 6 ----------------------------------------------------------------------------------------------
 /* Put your code below here!*/
 
 const GirlsNames = ["Anne", "Inger", "Kari", "Marit", "Ingrid", "Liv", "Eva", "Berit", "Astrid", "Bjørg", "Hilde", "Anna", "Solveig", "Marianne", "Randi", "Ida", "Nina", "Maria", "Elisabeth", "Kristin"];
+
+
+const selectTask6Girls = document.getElementById('selectTask6Girls');
+const txtTask6Output = document.getElementById('txtTask6Output');
+
+GirlsNames.forEach((name, index) => {
+  const option = document.createElement('option');
+  option.value = index + 1;
+  option.textContent = name;
+  selectTask6Girls.appendChild(option);
+});
+
+selectTask6Girls.addEventListener('change', function() {
+  const selectedName = selectTask6Girls.options[selectTask6Girls.selectedIndex].text;
+  txtTask6Output.textContent = `You selected: ${selectedName}`;
+});
+
 
 
 
