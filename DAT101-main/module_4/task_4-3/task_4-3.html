@@ -7,6 +7,8 @@
 <body style="display: table-cell; vertical-align: middle;">
 <h2>Task 4.3:</h2>
 <p></p>
+
+
 <fieldset>
   <legend>Task 1: Rectangle</legend>
   <label for="txtRectWidth">Width:</label>
@@ -17,6 +19,8 @@
   <p id="txtTask1Output">
     Circumference = 0, Area = 0
   </p>
+
+
 </fieldset>
 <p></p>
 <fieldset>
@@ -26,6 +30,8 @@
   <p id="txtTask2Output">Number of words = 0</p>
 </fieldset>
 <p></p>
+
+
 <fieldset>
   <legend>Task 3: Text</legend>
   <p>Check one or more as you please</p>
@@ -38,17 +44,21 @@
   <p id="txtTask3Output"></p>
 </fieldset>
 <p></p>
+
+
 <fieldset>
   <legend>Task 4: Cars</legend>
-  <p>Please select your favorite car brand!</p>
+  <p>Select your favorite car brand!</p>
   <div id="divTask4Cars">
   </div>
   <p id="txtTask4Output"></p>
 </fieldset>
 <p></p>
+
+
 <fieldset>
   <legend>Task 5: Animals</legend>
-  <label for="selectTask5Animals">Choose a animal:</label>
+  <label for="selectTask5Animals">Choose an animal:</label>
   <select id="selectTask5Animals">
     <option value="1" selected="selected">Giraffe</option>
     <option value="2">Peacock</option>
@@ -67,9 +77,11 @@
   <label for="selectTask6Girls">Choose a name:</label>
   <select id="selectTask6Girls">
   </select>
-  <p id="txtTask6Output">You selected: </p>
+  <p id="txtTask6Output">You picked: </p>
 </fieldset>
 <p></p>
+
+
 <fieldset>
   <legend>Task 7: Movies</legend>
   <label for="txtMovieTitle">Title: </label>
@@ -99,18 +111,19 @@
 <ol>
   <li>In this assignment, we use the DOM. Explain how this library can help us develop interactive web
     pages.</li>
-  <p>[Write your answer here, and copy this for more answers]</p>
+  <p>DOM (Document Object Model) works as a bridge between Html and javascript content on a webpage, making it possible to change the contents of the page and how it functions/responds. </p>
 
   <li>What is an event? Simply explain what happens when we add an event listener to an object.</li>
-  <p>[Write your answer here, and copy this for more answers]</p>
+  <p>In coding an event is a change that happens in the webpage, such as mouse clicks and key presses. An eventlistner is a good way to track inputs in real time, you can track said mouseclicks and keypresses. A listner is assigned to a spesific function/object and is usually working together with a callback funtion that runs whenever the tracked input is changed.</p>
 
   <li>Sometimes we need to use an event object to get data from the event. Explain how this event
     object is structured, don't explain all functions or attributes. Try to explain, for example, how to
     retrieve data from a keyboard or mouse.</li>
-  <p>[Write your answer here, and copy this for more answers]</p>
+  <p>A event object gives information about what event occured such as key presses or mouse movements/mouseclicks. event.button will for example track information on mouseclicks</p>
 
   <li>Explain the main difference between DOM id and DOM name. Can we have identical IDs?</li>
-  <p>[Write your answer here, and copy this for more answers]</p>
+  <p>DOM id is a unique identifier for an object/element in the DOM and is used to directly access elements through document.getElementById. These ids are unique within the document.</p>
+  <p>DOM name for example input name="username" is used to group elements together, multiple elements can share the same name for these.  </p>
 </ol>
 <script type="module" src="./task_4-3.mjs" defer></script>
 </body>

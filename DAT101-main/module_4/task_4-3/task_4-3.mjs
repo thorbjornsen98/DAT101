@@ -2,6 +2,8 @@
 
 import { newLine } from "../../common/script/utils.mjs";
 
+let text = "";
+
 //--- Part 1 ----------------------------------------------------------------------------------------------
 /* Put your code below here!*/
 
@@ -16,10 +18,11 @@ function cmbTask1CalculateClick() {
   const width = Number(txtRectWidth.value);
 
   
-  const perimeter = (height + width + height + width);
+  const circumference = (height + width + height + width);
   const area = (height * width);
   const txtTask1Output = document.getElementById("txtTask1Output");
-  txtTask1Output.innerHTML = "Omkrets: " + perimeter + "&nbsp; Areal: " + area;
+  //text += "Circumference: " + circumference + "Area: " + area 
+  txtTask1Output.innerHTML = "Circumference: " + circumference +"  Area: " + area;
 }
 
 //--- Part 2 ----------------------------------------------------------------------------------------------
@@ -29,7 +32,7 @@ const txtTask2Word = document.getElementById("txtTask2Word");
 txtTask2Word.addEventListener("keypress", txtTask2WordKeyPress);
 let task2Words = [];
 const txtTask2Output = document.getElementById("txtTask2Output");
-//TODO: Lage callback-funksjonen txtTask2WordKeyPress
+
 function txtTask2WordKeyPress(aEvent) {
   const key = aEvent.key;
   switch(key) {
@@ -50,29 +53,25 @@ const cmbTask3CheckAnswer = document.getElementById("cmbTask3CheckAnswer");
 cmbTask3CheckAnswer.addEventListener("click", cmbTask3CheckAnswerClick);
 const txtTask3Output = document.getElementById("txtTask3Output");
 
-let text = ""; //Tømmer teksten, gjør klar til ny utskrift.
+
 function cmbTask3CheckAnswerClick() {
   const chkTask3 = document.getElementsByName("chkTask3");
   for(let i = 0; i < chkTask3.length; i++) {
-    /*
-    TODO: Sjekk om checkboxen er huket av. og skriv ut resultatet i txtTask3Output
-          Skriv også ut hvilken checkbox som er huket av, og hva verdien er.
-          Det er også mulig å skrivet hele teksten til hver checkbox i txtTask3Output.
-    */
+    
    const checkBox = chkTask3[i];
    if(checkBox.checked){
     const value = checkBox.value;
     if(value === "4"){
-      text += "Du har valgt nummer " + value + ". Dette kan du ikke mene!!???<br />"
+      text += "You choose nr. " + value + ". Are you sure about this?<br />"
 
     }else{
-      text += "Du har valgt nummer " + value + ".<br />"
+      text += "You choose nr. " + value + ".<br />"
     }
    }
 
   }
   txtTask3Output.innerHTML = text;
-  text = ""; //Rømmer teksten, klargjør til neste klikk!
+  text = ""; 
 }
 
 //--- Part 4 ----------------------------------------------------------------------------------------------
@@ -115,7 +114,9 @@ const txtTask4Output = document.getElementById('txtTask4Output');
               divTask4Cars.appendChild(document.createElement('br'));
   
               radioButton.addEventListener('change', () => {
-                  txtTask4Output.textContent = `Selected car: ${car.caption}`;
+                text += "Selected car: " + car.caption;
+                  txtTask4Output.textContent = text;
+                  text = " " ;
               });
 });
 
@@ -132,7 +133,9 @@ const txtTask5Output = document.getElementById('txtTask5Output');
 
 selectTask5Animals.addEventListener('change', function() {
     const selectedAnimal = selectTask5Animals.options[selectTask5Animals.selectedIndex].text;
-    txtTask5Output.textContent = `Selected animal: ${selectedAnimal}`;
+    text = "You have selected: " +selectedAnimal;
+    txtTask5Output.textContent = text
+    text = " " ;
 });
 
 
@@ -159,7 +162,9 @@ GirlsNames.forEach((name, index) => {
 
 selectTask6Girls.addEventListener('change', function() {
   const selectedName = selectTask6Girls.options[selectTask6Girls.selectedIndex].text;
-  txtTask6Output.textContent = `You selected: ${selectedName}`;
+  text += "You picked: " +selectedName
+  txtTask6Output.textContent = text;
+  text = " "
 });
 
 
@@ -167,6 +172,7 @@ selectTask6Girls.addEventListener('change', function() {
 
 //--- Part 7 ----------------------------------------------------------------------------------------------
 /* Put your code below here!*/
+//foreløpig ikke hatt tid til å gjøre denne.
 
 const MovieGenre = [
   "Action",
