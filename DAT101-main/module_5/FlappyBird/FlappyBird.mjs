@@ -60,12 +60,10 @@ function loadGame(){
   GameProps.ground = new libSprite.TSprite(spcvs, SpriteInfoList.ground, pos);
   pos.x = 100;
   pos.y = 100;
-  GameProps.hero = new libSprite.TSprite(spcvs, SpriteInfoList.hero1, pos);
+  GameProps.hero = new THero(spcvs, SpriteInfoList.hero1, pos);
   
 
-  const obstacle = new libSprite.TSprite(spcvs, SpriteInfoList.obstacle, pos);
-  obstacle.index = 2;
-  GameProps.obstacles.push(obstacle);
+  spawnObstacle();
   requestAnimationFrame(drawGame);
   setInterval(animateGame, 10);
 }
@@ -93,11 +91,24 @@ function animateGame(){
     GameProps.ground.posX = 0;
   }
   GameProps.hero.update();
+  let delObstacleIndex = -1;
   for(let i = 0; i < GameProps.obstacles.length; i++){
     const obstacle = GameProps.obstacles[i];
     obstacle.update();
+    if(obstacle.posX < -50){
+      delObstacleIndex = i;
+    }
+  }
+  if(delObstacleIndex >= 0){
+    GameProps.obstacles.splice(delObstacleIndex, 1);
   }
 }
+function spawnObstacle(){
+  const obstacle = new TObstacle(spcvs, SpriteInfoList.obstacle);
+  GameProps.obstacles.push(obstacle);
+  setTimeout(spawnObstacle, 2000);
+}
+
 
 //--------------- Event Handlers -----------------------------------------//
 
