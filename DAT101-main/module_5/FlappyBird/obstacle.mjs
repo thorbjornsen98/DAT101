@@ -8,11 +8,16 @@ class TObstacle  {
   #spi;
   constructor(aSpriteCanvas, aSpriteInfo) {
     this.#spi = aSpriteInfo;
-    const pos = new lib2d.TPosition(650,-50)
-    this.#upper = new libSprite.TSprite(aSpriteCanvas, aSpriteInfo, pos);
+
+    const gapY = Math.random() * 230 - 280; 
+    const gapSize = 100;
+
+    const upperPos = new lib2d.TPosition(650, gapY)
+    this.#upper = new libSprite.TSprite(aSpriteCanvas, aSpriteInfo, upperPos);
     this.#upper.index = 3;
 
-    this.#lower = new libSprite.TSprite(aSpriteCanvas, aSpriteInfo, pos);
+    const lowerPos = new lib2d.TPosition(650, gapY + aSpriteInfo.height + gapSize);
+    this.#lower = new libSprite.TSprite(aSpriteCanvas, aSpriteInfo, lowerPos);
     this.#lower.index = 2;
   }
 

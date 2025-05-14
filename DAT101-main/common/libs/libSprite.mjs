@@ -47,18 +47,24 @@ class TSprite {
   #spcvs;
   #spi;
   #pos;
+  #destPos;  // New property for destination position
   #index;
   #speedIndex;
-  constructor(aSpriteCanvas, aSpriteInfo, aPosition) {
+  #speed = 0; // Movement speed (pixels per frame)
+  #isMoving = false; // Whether sprite is currently moving to destination
+
+  constructor(aSpriteCanvas, aSpriteInfo, aPosition, aDestination = null) {
     this.#spcvs = aSpriteCanvas;
     this.#spi = aSpriteInfo;
-    this.#pos = aPosition.clone(); //Vi trenger en kopi av posisjonen
+    this.#pos = aPosition.clone();
+    this.#destPos = aDestination ? aDestination.clone() : null;
     this.#index = 0;
     this.animateSpeed = 0;
     this.#speedIndex = 0;
   }
 
   draw() {
+    // Handle animation
     if (this.animateSpeed > 0) {
       this.#speedIndex += this.animateSpeed / 100;
       if (this.#speedIndex >= 1) {
@@ -69,9 +75,48 @@ class TSprite {
         }
       }
     }
+
+    // Handle movement towards destination
+    if (this.#isMoving && this.#destPos) {
+      this.#moveTowardsDestination();
+    }
+
     this.#spcvs.drawSprite(this.#spi, this.#pos.x, this.#pos.y, this.#index);
   }
 
+  #moveTowardsDestination() {
+    const dx = this.#destPos.x - this.#pos.x;
+    const dy = this.#destPos.y - this.#pos.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // If we've reached the destination (or very close)
+    if (distance < this.#speed) {
+      this.#pos.x = this.#destPos.x;
+      this.#pos.y = this.#destPos.y;
+      this.#isMoving = false;
+      return;
+    }
+
+    // Move towards destination
+    const vx = (dx / distance) * this.#speed;
+    const vy = (dy / distance) * this.#speed;
+    this.#pos.x += vx;
+    this.#pos.y += vy;
+  }
+
+  // Set a new destination for the sprite to move towards
+  setDestination(x, y, speed = 1) {
+    this.#destPos = new lib2d.TPosition(x, y);
+    this.#speed = speed;
+    this.#isMoving = true;
+  }
+
+  // Check if sprite is currently moving to destination
+  get isMoving() {
+    return this.#isMoving;
+  }
+
+  // Existing methods remain the same...
   translate(aDx, aDy) {
     this.#pos.x += aDx;
     this.#pos.y += aDy;
@@ -98,14 +143,14 @@ class TSprite {
     this.#pos.y = aY;
   }
 
-  get index(){
+  get index() {
     return this.#index;
   }
 
-  set index(aIndex){
+  set index(aIndex) {
     this.#index = aIndex;
   }
-} //End of TSprite class
+}
 
 export default {
   /**

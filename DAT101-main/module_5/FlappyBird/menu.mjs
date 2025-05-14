@@ -2,7 +2,8 @@
 import lib2d from "../../common/libs/lib2d.mjs";
 import libSound from "../../common/libs/libSound.mjs";
 import libSprite from "../../common/libs/libSprite.mjs";
-import { SpriteInfoList, GameProps, EGameStatus, startGame } from "./FlappyBird.mjs";
+import { SpriteInfoList, GameProps, EGameStatus } from "./FlappyBird.mjs";
+console.log("libSprite:", libSprite);
 
 /*
 Dere skal flytte FlappyBird Spriten til en fornuftig plass på skjermen.
@@ -23,14 +24,23 @@ export class TMenu {
   #posBestScore;
   #posPlayScore;
   #ranking = {first: 0, second: 0, third: 0};
-  constructor(aSpriteCanvas) {
-    this.#spcvs = aSpriteCanvas;
-    /* 
-    Bruk denne koden for jukse litt og starte spillet direkte 
-    i en annen status enn EGameStatus.idle
-    */
-    GameProps.status = EGameStatus.idle;
+  #aSpriteCanvas; 
+
+   constructor(canvasElement, aSpriteCanvas) {
+    this.#spcvs = canvasElement;       // For event listeners
+    this.#aSpriteCanvas = aSpriteCanvas;  // For drawing sprites
+        GameProps.status = EGameStatus.idle;
     const pos = new lib2d.TPosition(210, 180);
+    
+    console.log("Creating FlappyBird sprite", SpriteInfoList.flappyBird);
+    console.log("SpriteCanvas", aSpriteCanvas);
+    console.log("TSprite class", libSprite.TSprite);
+    
+    this.#spFlappyBird = new libSprite.TSprite(aSpriteCanvas, SpriteInfoList.flappyBird, pos);
+    
+    console.log("FlappyBird sprite object", this.#spFlappyBird);
+
+
     this.#spFlappyBird = new libSprite.TSprite(aSpriteCanvas, SpriteInfoList.flappyBird, pos);
 
     pos.y = 260;
@@ -63,6 +73,7 @@ export class TMenu {
   }
 
   draw() {
+     console.log("Menu called")
     switch (GameProps.status) {
       case EGameStatus.idle:
         this.#spFlappyBird.draw();
