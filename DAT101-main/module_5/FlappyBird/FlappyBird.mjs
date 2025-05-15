@@ -61,8 +61,6 @@ function playSound(aSound) {
 }
 
 function loadGame(){
-  
-  console.log("Game ready to load");
   cvs.width = SpriteInfoList.background.width;
   cvs.height = SpriteInfoList.background.height;
 
@@ -73,25 +71,18 @@ function loadGame(){
   pos.x = 100;
   pos.y = 150;
   GameProps.hero = new THero(spcvs, SpriteInfoList.hero1, pos);
-    console.log("Game loaded")
-GameProps.menu = new TMenu(cvs, spcvs);
 
-  spawnObstacle();
+  console.log("Game loaded");
+  GameProps.menu = new TMenu(cvs, spcvs, startGame);
+  console.log("spcvs:", spcvs);
+
+  spawnObstacle();  // Ensure this is spelled correctly as spawnObstacle
   requestAnimationFrame(drawGame);
   setInterval(animateGame, 10);
 }
 
-function startGame() {
-  GameProps.status = EGameStatus.playing;
-  GameProps.menu.reset();
 
-  GameProps.hero.pos.x = 100;
-  GameProps.hero.pos.y = 150;
 
-  GameProps.obstacles = [];
-
-  spawnObstacle();
-}
 
 function drawGame(){
   spcvs.clearCanvas();
@@ -99,9 +90,7 @@ function drawGame(){
   drawObstacles();
   GameProps.ground.draw();
   GameProps.hero.draw();
-  console.log("Menu before load")
   GameProps.menu.draw();
-  console.log("Menu loaded")
   requestAnimationFrame(drawGame);
 }
 
@@ -157,9 +146,46 @@ function spawnObstacle() {
   if (GameProps.status === EGameStatus.playing) {
     const obstacle = new TObstacle(spcvs, SpriteInfoList.obstacle);
     GameProps.obstacles.push(obstacle);
-    setTimeout(spawnObstacle, 2000);
+    setTimeout(spawnObstacle, 2000); // Correct reference here as well
   }
 }
+
+function startGame() {
+  // Set the game status to 'playing' and reset the menu
+  GameProps.status = EGameStatus.playing;
+  GameProps.menu.reset();  // Reset any menu-related states
+  
+  // Reset the hero's position to the starting point
+  GameProps.hero.pos.x = 100;
+  GameProps.hero.pos.y = 150;
+
+  // Reset the obstacles array (clear any previously spawned obstacles)
+  GameProps.obstacles = [];
+
+  // Reset the score in the menu and game state
+  GameProps.score = 0;
+  GameProps.menu.incScore(0);  // Assuming `incScore` is a method to update the score in the menu
+
+  // Start spawning obstacles
+  spawnObstacle();
+
+  // Clear the canvas and re-draw all game elements
+  spcvs.clearCanvas();
+  GameProps.background.draw();
+  GameProps.ground.draw();
+  GameProps.hero.draw();
+
+  // Start the game loop with requestAnimationFrame
+  requestAnimationFrame(drawGame);
+  
+  // Optionally, set up the game animation interval
+  setInterval(animateGame, 10);
+  
+  console.log("Game has started!");
+}
+
+
+
 
 function endGame() {
   GameProps.status = EGameStatus.gameOver;

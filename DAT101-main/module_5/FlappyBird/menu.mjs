@@ -3,7 +3,8 @@ import lib2d from "../../common/libs/lib2d.mjs";
 import libSound from "../../common/libs/libSound.mjs";
 import libSprite from "../../common/libs/libSprite.mjs";
 import { SpriteInfoList, GameProps, EGameStatus } from "./FlappyBird.mjs";
-console.log("libSprite:", libSprite);
+import libSprite_v2 from "../../common/libs/libSprite_v2.mjs";
+
 
 /*
 Dere skal flytte FlappyBird Spriten til en fornuftig plass på skjermen.
@@ -15,7 +16,6 @@ export class TMenu {
   #spButtonPlay;
   #spNumber;
   #spInfoText;
-  //Hint spGameOver, spMedal, spScore osv.
   #spGameOver;
   #spMedal;
   #spcvs;
@@ -25,20 +25,15 @@ export class TMenu {
   #posPlayScore;
   #ranking = {first: 0, second: 0, third: 0};
   #aSpriteCanvas; 
+  #startGame;
 
-   constructor(canvasElement, aSpriteCanvas) {
+   constructor(canvasElement, aSpriteCanvas, startGame) {
     this.#spcvs = canvasElement;       // For event listeners
     this.#aSpriteCanvas = aSpriteCanvas;  // For drawing sprites
-        GameProps.status = EGameStatus.idle;
+    
+    GameProps.status = EGameStatus.idle;
     const pos = new lib2d.TPosition(210, 180);
     
-    console.log("Creating FlappyBird sprite", SpriteInfoList.flappyBird);
-    console.log("SpriteCanvas", aSpriteCanvas);
-    console.log("TSprite class", libSprite.TSprite);
-    
-    this.#spFlappyBird = new libSprite.TSprite(aSpriteCanvas, SpriteInfoList.flappyBird, pos);
-    
-    console.log("FlappyBird sprite object", this.#spFlappyBird);
 
 
     this.#spFlappyBird = new libSprite.TSprite(aSpriteCanvas, SpriteInfoList.flappyBird, pos);
@@ -70,10 +65,15 @@ export class TMenu {
     this.#posScore = new lib2d.TPosition(383, 181);
     this.#posBestScore = new lib2d.TPosition(383, 225);
     this.#posPlayScore = new lib2d.TPosition(75, 50);
+    this.#startGame = startGame;
+     document.addEventListener('keydown', (event) => {
+      if (event.code === 'Space') {
+        this.#startGame();  // Make sure this refers to the startGame method in the TMenu class
+      }
+    });
   }
 
   draw() {
-     console.log("Menu called")
     switch (GameProps.status) {
       case EGameStatus.idle:
         this.#spFlappyBird.draw();
@@ -99,6 +99,8 @@ export class TMenu {
     }
   } // end of draw
 
+
+  
   incScore(aScore){
     GameProps.score += aScore;
     if(GameProps.score > this.#ranking.first){ //Første plass
@@ -155,7 +157,11 @@ export class TMenu {
       this.#spNumber.index--;
       setTimeout(this.#onCountDown, 1000);
     } else {
-      startGame();
+    if (typeof this.#startGame === "function") {
+      this.#startGame(); // ✅ Call the global startGame
     }
-  };
-} // End of TMenu class
+  }
+};
+
+
+}
