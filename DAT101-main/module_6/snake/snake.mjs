@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------------------
 import libSprite from "../../common/libs/libSprite_v2.mjs";
 import lib2D from "../../common/libs/lib2d_v2.mjs";
-import { GameProps, SheetData, bateIsEaten } from "./game.mjs"
+import { GameProps, SheetData, baitIsEaten } from "./game.mjs"
 import { TBoardCell, EBoardCellInfoType } from "./gameBoard.mjs";
 
 //------------------------------------------------------------------------------------------
@@ -12,6 +12,7 @@ import { TBoardCell, EBoardCellInfoType } from "./gameBoard.mjs";
 //------------------------------------------------------------------------------------------
 const ESpriteIndex = {UR: 0, LD: 0, RU: 1, DR: 1, DL: 2, LU: 2, RD: 3, UL: 3, RL: 4, UD: 5};
 export const EDirection = { Up: 0, Right: 1, Left: 2, Down: 3 };
+let baitEaten = false;
 
 
 //-----------------------------------------------------------------------------------------
@@ -76,7 +77,8 @@ class TSnakeHead extends TSnakePart {
     //Check if the snake head is on a bait cell
     const boardCellInfo = GameProps.gameBoard.getCell(this.boardCell.row, this.boardCell.col);
     if(boardCellInfo.infoType === EBoardCellInfoType.Bait) {
-      bateIsEaten();
+      baitIsEaten();
+      baitEaten = true;
     }else{
       /* Decrease the score if the snake head is not on a bait cell */
     }
@@ -92,7 +94,7 @@ class TSnakeHead extends TSnakePart {
     }
     return collision; // Collision detected
   }
-}
+}// class TSnakeHead
 
 class TSnakeBody extends TSnakePart {
   constructor(aSpriteCanvas, aBoardCell ) {
@@ -221,6 +223,8 @@ export class TSnake {
   #head = null;
   #body = null;
   #tail = null;
+ 
+  
   constructor(aSpriteCanvas, aBoardCell) {
     this.#head = new TSnakeHead(aSpriteCanvas, aBoardCell);
     let col = aBoardCell.col - 1;
@@ -242,19 +246,44 @@ export class TSnake {
     if (this.#isDead) {
       return false; // Snake is dead, do not continue
     }
+
     if(this.#head.update()) {
+
+      let cloneBody = null;
+
+    // 💡 Clones body part if bait was eaten before body updates
+    if (baitEaten && this.#body.length > 0) {
+      const lastBodyPart = this.#body[this.#body.length - 1];
+      cloneBody = lastBodyPart.clone(); 
+    }
+
+
       for (let i = 0; i < this.#body.length; i++) {
         this.#body[i].update();
       }
-      this.#tail.update();  
+      if (baitEaten) {
+        this.#body.push(cloneBody);
+        baitEaten = false;
+        //console.log(this.#body.length + 2)
+
+        } else {
+        this.#tail.update(); 
+    }
+
     }else if(!this.#isDead){
       this.#isDead = true;
       return false; // Collision detected, do not continue
     }
     return true; // No collision, continue
   }
+   
 
   setDirection(aDirection) {
     this.#head.setDirection(aDirection);
   } // setDirection
+  
+  // Make snake length global
+  get SnakeLength() {
+    return this.#body.length + 2; 
+  }
 }

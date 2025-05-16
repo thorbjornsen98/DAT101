@@ -1,21 +1,28 @@
 "use strict";
 
-//-----------------------------------------------------------------------------------------
 //----------- Import modules, mjs files  ---------------------------------------------------
-//-----------------------------------------------------------------------------------------
+
 import libSprite from "../../common/libs/libSprite_v2.mjs";
 import { TGameBoard, GameBoardSize, TBoardCell } from "./gameBoard.mjs";
 import { TSnake, EDirection } from "./snake.mjs";
 import { TBait } from "./bait.mjs";
+import { TMenu } from "./menu.mjs";
 
-//-----------------------------------------------------------------------------------------
 //----------- variables and object --------------------------------------------------------
-//-----------------------------------------------------------------------------------------
+
 const cvs = document.getElementById("cvs");
 const spcvs = new libSprite.TSpriteCanvas(cvs);
-let gameSpeed = 4; // Game speed multiplier;
+let gameSpeed = 4; 
 let hndUpdateGame = null;
-export const EGameStatus = { Idle: 0, Playing: 1, Pause: 2, GameOver: 3 };
+let baitScore = 50;
+
+
+export const EGameStatus = { 
+  Idle: 0,
+  Playing: 1,
+  Pause: 2,
+  GameOver: 3 
+};
 
 // prettier-ignore
 export const SheetData = {
@@ -35,7 +42,9 @@ export const GameProps = {
   gameBoard: null,
   gameStatus: EGameStatus.Idle,
   snake: null,
-  bait: null
+  bait: null,
+  menu: null,
+
 };
 
 //------------------------------------------------------------------------------------------
@@ -44,103 +53,218 @@ export const GameProps = {
 
 export function newGame() {
   GameProps.gameBoard = new TGameBoard();
-  GameProps.snake = new TSnake(spcvs, new TBoardCell(5, 5)); // Initialize snake with a starting position
+  GameProps.snake = new TSnake(spcvs, new TBoardCell(5, 5)); // Starting position
   GameProps.bait = new TBait(spcvs); // Initialize bait with a starting position
   gameSpeed = 4; // Reset game speed
+  baitScore = 50;
+  GameProps.gameStatus = EGameStatus.Playing;
 }
 
-export function bateIsEaten() {
-
-  console.log("Bait eaten!");
-  /* Logic to increase the snake size and score when bait is eaten */
-
-  increaseGameSpeed(); // Increase game speed
+export function baitIsEaten() {
+  GameProps.snake.update(); // Grows the snake if bait is eaten.
+  GameProps.bait.update(); // Randomly moves bait to different tile
+  increaseGameSpeed(); // Increase game speed slightly
 }
 
-
-//------------------------------------------------------------------------------------------
 //----------- functions -------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
 
+//Load game
 function loadGame() {
   cvs.width = GameBoardSize.Cols * SheetData.Head.width;
   cvs.height = GameBoardSize.Rows * SheetData.Head.height;
 
-  GameProps.gameStatus = EGameStatus.Playing; // change game status to Idle
+  GameProps.gameStatus = EGameStatus.Idle; 
+  GameProps.menu = new TMenu(spcvs, cvs, newGame);
 
-  /* Create the game menu here */ 
-
-  newGame(); // Call this function from the menu to start a new game, remove this line when the menu is ready
 
   requestAnimationFrame(drawGame);
-  console.log("Game canvas is rendering!");
-  hndUpdateGame = setInterval(updateGame, 1000 / gameSpeed); // Update game every 1000ms / gameSpeed
-  console.log("Game canvas is updating!");
-}
+    hndUpdateGame = setInterval(updateGame, 1000 / gameSpeed); // Update game every 1000ms / gameSpeed
+  }
 
+//Draw game
 function drawGame() {
-  // Clear the canvas
+
   spcvs.clearCanvas();
 
   switch (GameProps.gameStatus) {
+    
+    case EGameStatus.Idle:
+      GameProps.menu.drawStartMenu();
+      break;
+    
     case EGameStatus.Playing:
+      GameProps.bait.draw();
+      GameProps.snake.draw();
+      GameProps.menu.setSnakeLengthAlpha(0.5);
+      GameProps.menu.drawSnakeLength();
+      GameProps.menu.baitScoreX = 800;
+      GameProps.menu.baitScoreY = 10;
+      GameProps.menu.setBaitScoreAlpha(0.5);
+      GameProps.menu.drawBaitScore();
+      break;
+
     case EGameStatus.Pause:
       GameProps.bait.draw();
       GameProps.snake.draw();
+      GameProps.menu.drawPauseMenu();
+      GameProps.menu.setSnakeLengthAlpha(1);
+      GameProps.menu.drawSnakeLength(); 
+      GameProps.menu.setBaitScoreAlpha(1);
+      GameProps.menu.drawBaitScore();
       break;
+
+    case EGameStatus.GameOver:
+      GameProps.bait.draw();
+      GameProps.snake.draw();
+      GameProps.menu.drawGameOver();
+      GameProps.menu.baitScoreX = 520;
+      GameProps.menu.baitScoreY = 265;
+      GameProps.menu.setBaitScoreAlpha(1);
+      GameProps.menu.drawBaitScore();
+      break;
+    
   }
   // Request the next frame
   requestAnimationFrame(drawGame);
 }
 
+//Update game
 function updateGame() {
-  // Update game logic here
   switch (GameProps.gameStatus) {
     case EGameStatus.Playing:
       if (!GameProps.snake.update()) {
         GameProps.gameStatus = EGameStatus.GameOver;
-        console.log("Game over!");
-      }
-      break;
+        }
+        console.log("snake lenght: " + GameProps.snake.SnakeLength)
+        // reduceBaitScore();
+        //  GameProps.menu.updateBaitScore(baitScore);
+        break;
+    }
   }
-}
 
+//Game speed
 function increaseGameSpeed() {
-  /* Increase game speed logic here */
-  console.log("Increase game speed!");
-}
+  gameSpeed += 0.5;
+    if (gameSpeed > 20) gameSpeed = 20; // limit max speed
 
+    //needed to add this so game speed updates without pausing 
+    clearInterval(hndUpdateGame); 
+    hndUpdateGame = setInterval(updateGame, 1000 / gameSpeed); 
+    console.log("Increase game speed to " + gameSpeed);
+  }
 
-//-----------------------------------------------------------------------------------------
 //----------- Event handlers --------------------------------------------------------------
-//-----------------------------------------------------------------------------------------
 
+//Key down events
 function onKeyDown(event) {
   switch (event.key) {
+    // Arrow key and wasd snake movement
     case "ArrowUp":
-      GameProps.snake.setDirection(EDirection.Up);
-      break;
+    case "w":
+    case "W":
+    GameProps.snake.setDirection(EDirection.Up);
+    break;
     case "ArrowDown":
-      GameProps.snake.setDirection(EDirection.Down);
-      break;
+    case "s":
+    case "S":
+    GameProps.snake.setDirection(EDirection.Down);
+    break;
     case "ArrowLeft":
-      GameProps.snake.setDirection(EDirection.Left);
-      break;
+    case "a":
+    case "A":
+    GameProps.snake.setDirection(EDirection.Left);
+    break;
     case "ArrowRight":
-      GameProps.snake.setDirection(EDirection.Right);
-      break;
-    case " ":
-      console.log("Space key pressed!");
-      /* Pause the game logic here */
+    case "d":
+    case "D":
+    GameProps.snake.setDirection(EDirection.Right);
+    break;
       
-      break;
-    default:
-      console.log(`Key pressed: "${event.key}"`);
+    //Pause and unpause game with space
+    case " ":
+      if (GameProps.gameStatus === EGameStatus.Playing) {
+        GameProps.gameStatus = EGameStatus.Pause;
+        clearInterval(hndUpdateGame);
+      
+        } else if (GameProps.gameStatus === EGameStatus.Pause) {
+          GameProps.gameStatus = EGameStatus.Playing;
+          hndUpdateGame = setInterval(updateGame, 1000 / gameSpeed);
+        }
+        break;
   }
 }
-//-----------------------------------------------------------------------------------------
+//Mouse click events
+function onCanvasClick(event) {
+    
+  if (GameProps.gameStatus === EGameStatus.Idle) {
+    const rect = cvs.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const clickY = event.clientY - rect.top;
+
+    // Check if click is inside the Play button's bounding box
+    const btn = GameProps.menu.playButton;
+    if (
+      clickX >= btn.x &&
+      clickX <= btn.x + btn.width * btn.scale &&
+      clickY >= btn.y &&
+      clickY <= btn.y + btn.height * btn.scale
+    ) {
+    newGame();
+    }
+  }
+  //Resume button
+  if (GameProps.gameStatus === EGameStatus.Pause) {
+    const rect = cvs.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const clickY = event.clientY - rect.top;
+
+    const btn = GameProps.menu.ResumeButton;
+    if (
+        clickX >= btn.x &&
+        clickX <= btn.x + btn.width * btn.scale &&
+        clickY >= btn.y &&
+        clickY <= btn.y + btn.height * btn.scale
+      ) {
+    GameProps.gameStatus = EGameStatus.Playing; 
+    hndUpdateGame = setInterval(updateGame, 1000 / gameSpeed);
+  }
+}
+  //Game over menu buttons
+    if (GameProps.gameStatus === EGameStatus.GameOver) {
+      const rect = cvs.getBoundingClientRect();
+      const clickX = event.clientX - rect.left;
+      const clickY = event.clientY - rect.top;
+
+      //Home button  
+      const homeBtn = GameProps.menu.homeButton;
+        if (
+        clickX >= homeBtn.x &&
+        clickX <= homeBtn.x + homeBtn.width * homeBtn.scale &&
+        clickY >= homeBtn.y &&
+        clickY <= homeBtn.y + homeBtn.height * homeBtn.scale
+      ) {
+      GameProps.gameStatus = EGameStatus.Idle;
+      return; 
+      }
+    
+      //Retry button
+      const retryBtn = GameProps.menu.retryButton;
+        if (
+        clickX >= retryBtn.x &&
+        clickX <= retryBtn.x + retryBtn.width * retryBtn.scale &&
+        clickY >= retryBtn.y &&
+        clickY <= retryBtn.y + retryBtn.height * retryBtn.scale
+        ) {
+      newGame();
+      GameProps.gameStatus = EGameStatus.Playing;
+      return; 
+      }
+    }
+  }
+
 //----------- main -----------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------
+
 
 spcvs.loadSpriteSheet("./Media/spriteSheet.png", loadGame);
 document.addEventListener("keydown", onKeyDown);
+cvs.addEventListener("click", onCanvasClick);
