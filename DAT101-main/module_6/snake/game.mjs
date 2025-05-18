@@ -15,7 +15,9 @@ const spcvs = new libSprite.TSpriteCanvas(cvs);
 let gameSpeed = 4; 
 let hndUpdateGame = null;
 let baitScore = 50;
-
+let score = 0;
+let time = 0;
+let eatTime = 0;
 
 export const EGameStatus = { 
   Idle: 0,
@@ -44,6 +46,7 @@ export const GameProps = {
   snake: null,
   bait: null,
   menu: null,
+  score: 0
 
 };
 
@@ -57,13 +60,22 @@ export function newGame() {
   GameProps.bait = new TBait(spcvs); // Initialize bait with a starting position
   gameSpeed = 4; // Reset game speed
   baitScore = 50;
+  time = Date.now();
+  GameProps.score = 0;
   GameProps.gameStatus = EGameStatus.Playing;
 }
 
 export function baitIsEaten() {
-  GameProps.snake.update(); // Grows the snake if bait is eaten.
-  GameProps.bait.update(); // Randomly moves bait to different tile
-  increaseGameSpeed(); // Increase game speed slightly
+  GameProps.snake.update(); // Grows the snake
+  GameProps.bait.update(); // Moves bait to different tile
+  increaseGameSpeed(); // Increase game speed
+  eatTime = Date.now();
+  baitScore = Math.floor(50 - ((eatTime - time) /1000))
+    if (baitScore < 20) baitScore = 20;
+  GameProps.score += baitScore;
+  console.log("BaitScore: " +baitScore)
+  baitScore = 50;
+  time = Date.now();
 }
 
 //----------- functions -------------------------------------------------------------------
@@ -75,7 +87,6 @@ function loadGame() {
 
   GameProps.gameStatus = EGameStatus.Idle; 
   GameProps.menu = new TMenu(spcvs, cvs, newGame);
-
 
   requestAnimationFrame(drawGame);
     hndUpdateGame = setInterval(updateGame, 1000 / gameSpeed); // Update game every 1000ms / gameSpeed
@@ -97,10 +108,16 @@ function drawGame() {
       GameProps.snake.draw();
       GameProps.menu.setSnakeLengthAlpha(0.5);
       GameProps.menu.drawSnakeLength();
-      GameProps.menu.baitScoreX = 800;
-      GameProps.menu.baitScoreY = 10;
+      GameProps.menu.scoreOnesX = 600;
+      GameProps.menu.scoreOnesY = 10;
+      GameProps.menu.scoreTensX = 675;
+      GameProps.menu.scoreTensY = 10;
+      GameProps.menu.scoreHundredX = 750;
+      GameProps.menu.scoreHundredY = 10;
+      GameProps.menu.scoreThousandsX = 825;
+      GameProps.menu.scoreThousandsY = 10;
       GameProps.menu.setBaitScoreAlpha(0.5);
-      GameProps.menu.drawBaitScore();
+      GameProps.menu.drawScore();
       break;
 
     case EGameStatus.Pause:
@@ -110,17 +127,23 @@ function drawGame() {
       GameProps.menu.setSnakeLengthAlpha(1);
       GameProps.menu.drawSnakeLength(); 
       GameProps.menu.setBaitScoreAlpha(1);
-      GameProps.menu.drawBaitScore();
+      GameProps.menu.drawScore();
       break;
 
     case EGameStatus.GameOver:
       GameProps.bait.draw();
       GameProps.snake.draw();
       GameProps.menu.drawGameOver();
-      GameProps.menu.baitScoreX = 520;
-      GameProps.menu.baitScoreY = 265;
+      GameProps.menu.scoreOnesX = 510;
+      GameProps.menu.scoreOnesY = 265;
+      GameProps.menu.scoreTensX = 585;
+      GameProps.menu.scoreTensY = 265;
+      GameProps.menu.scoreHundredX = 660;
+      GameProps.menu.scoreHundredY = 265;
+      GameProps.menu.scoreThousandsX = 735;
+      GameProps.menu.scoreThousandsY = 265;
       GameProps.menu.setBaitScoreAlpha(1);
-      GameProps.menu.drawBaitScore();
+      GameProps.menu.drawScore();
       break;
     
   }
@@ -135,9 +158,6 @@ function updateGame() {
       if (!GameProps.snake.update()) {
         GameProps.gameStatus = EGameStatus.GameOver;
         }
-        console.log("snake lenght: " + GameProps.snake.SnakeLength)
-        // reduceBaitScore();
-        //  GameProps.menu.updateBaitScore(baitScore);
         break;
     }
   }
@@ -150,7 +170,7 @@ function increaseGameSpeed() {
     //needed to add this so game speed updates without pausing 
     clearInterval(hndUpdateGame); 
     hndUpdateGame = setInterval(updateGame, 1000 / gameSpeed); 
-    console.log("Increase game speed to " + gameSpeed);
+    //console.log("Increase game speed to " + gameSpeed);
   }
 
 //----------- Event handlers --------------------------------------------------------------
@@ -180,7 +200,7 @@ function onKeyDown(event) {
     GameProps.snake.setDirection(EDirection.Right);
     break;
       
-    //Pause and unpause game with space
+    //Pause, unpause and restart game with space
     case " ":
       if (GameProps.gameStatus === EGameStatus.Playing) {
         GameProps.gameStatus = EGameStatus.Pause;
@@ -189,8 +209,11 @@ function onKeyDown(event) {
         } else if (GameProps.gameStatus === EGameStatus.Pause) {
           GameProps.gameStatus = EGameStatus.Playing;
           hndUpdateGame = setInterval(updateGame, 1000 / gameSpeed);
+        } else if (GameProps.gameStatus === EGameStatus.GameOver){
+          newGame();
         }
         break;
+        
   }
 }
 //Mouse click events

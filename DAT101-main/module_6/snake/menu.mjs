@@ -4,7 +4,6 @@ import lib2d from "../../common/libs/lib2d_v2.mjs";
 import { GameProps, EGameStatus, SheetData } from "./game.mjs";
 
 export class TMenu  {
-#baitScore;
 #spcvs;
 #SpriteCanvas;
 #snakeLengthAlpha = 0.5;
@@ -15,13 +14,30 @@ export class TMenu  {
     this.#SpriteCanvas = aSpriteCanvas;  // For drawing sprites
     
 
-    // Snake Length
-    this.snakeLengthX = 10;
-    this.snakeLengthY = 10;
+    // Snake Length 1s
+    this.snakeLengthOnesX = 10;
+    this.snakeLengthOnesY = 10;
 
-    // Bait Score
-    this.baitScoreX = 800;
-    this.baitScoreY = 10;
+    
+    // Snake Length 10s
+    this.snakeLengthTensX = 85;
+    this.snakeLengthTensY = 10;
+
+    // Bait Score 1s
+    this.scoreOnesX = 600;
+    this.scoreOnesY = 10;
+
+    // Bait Score 10s
+    this.scoreTensX = 675;
+    this.scoreTensY = 10;
+
+    // Bait Score 100s
+    this.scoreHundredX = 750;
+    this.scoreHundredY = 10;
+
+    // Bait Score 1000s
+    this.scoreThousandsX = 825;
+    this.scoreThousandsY = 10;
     
     // Resume Button for game unpause
     this.resumeBtnX = 356;
@@ -44,77 +60,135 @@ export class TMenu  {
   //Snake Length Display
 
   drawSnakeLength(){
-    const length = GameProps.snake?.SnakeLength ?? 0;
-    const str = length.toString(); 
-
-    const digitWidth = SheetData.Number.width;
-    const spacing = digitWidth * 0.9; 
-    const startX = this.snakeLengthX; // your base X position
-    const y = this.snakeLengthY;
-
-    for (let i = 0; i < str.length; i++) {
-      const digit = parseInt(str[i]);
-
-      const x = startX + i * spacing;
-
-    const shape = {
-      x: x,
-      y: y,
-      width: digitWidth,
+    const onesShape = {
+      x: this.snakeLengthOnesX,
+      y: this.snakeLengthOnesY,
+      width: SheetData.Number.width,
       height: SheetData.Number.height,
-      center: {
-        x: x + digitWidth / 2,
-        y: y + SheetData.Number.height / 2,
-      },
+      center: { x: this.snakeLengthOnesX + SheetData.Number.width / 2, y: this.snakeLengthOnesY + SheetData.Number.height / 2 },
     };
-
-    const aSprite = {
-      index: digit,            // selects the correct digit frame
+    const digit1 = this.getDigitAt(GameProps.snake.SnakeLength, 0)
+    const onesSprite = {
+      index: digit1,          
       spi: SheetData.Number,
-      shape: shape,
+      shape: onesShape,
       rotation: 0,
       alpha: this.#snakeLengthAlpha,
-      center: shape.center,
+      center: onesShape.center,
     };
 
-    this.#spcvs.drawSprite(aSprite);
+     const tensShape = {
+      x: this.snakeLengthTensX,
+      y: this.snakeLengthTensY,
+      width: SheetData.Number.width,
+      height: SheetData.Number.height,
+      center: { x: this.snakeLengthTensX + SheetData.Number.width / 2, y: this.snakeLengthTensY + SheetData.Number.height / 2 },
+    };
+    const digit2 = this.getDigitAt(GameProps.snake.SnakeLength, 1)
+    const tensSprite = {
+      index: digit2,       
+      spi: SheetData.Number,
+      shape: tensShape,
+      alpha: this.#snakeLengthAlpha,
+      center: tensShape.center,
+    };
+
+    this.#spcvs.drawSprite(onesSprite);
+    this.#spcvs.drawSprite(tensSprite);
   }
-}
+
 // To modify alpha through different game states
   setSnakeLengthAlpha(alpha) {
   this.#snakeLengthAlpha = alpha;
 }
 
-  //Bait Score
-  drawBaitScore(){
-    const shape = {
-      x: this.baitScoreX,
-      y: this.baitScoreY,
+ //pulls out different digit from numbers
+  getDigitAt(num, index) { 
+  return parseInt(num.toString()[index]);
+}
+  //Draw score (top right)
+  drawScore(){ // Note i accidentally reversed all these names
+
+    const onesShape = {
+      x: this.scoreOnesX,
+      y: this.scoreOnesY,
       width: SheetData.Number.width,
       height: SheetData.Number.height,
-      center: { x: this.baitScoreX + SheetData.Number.width / 2, y: this.baitScoreY + SheetData.Number.height / 2 },
+      center: { x: this.scoreOnesX + SheetData.Number.width / 2, y: this.scoreOnesY + SheetData.Number.height / 2 },
     };
-
-    const aSprite = {
-      index: 8,            // selects the correct digit frame
+    const digit1 = this.getDigitAt(GameProps.score, 0)
+    const onesSprite = {
+      index: digit1,          
       spi: SheetData.Number,
-      shape: shape,
+      shape: onesShape,
       rotation: 0,
       alpha: this.#baitScoreAlpha,
-      center: shape.center,
+      center: onesShape.center,
     };
 
-    this.#spcvs.drawSprite(aSprite);
+     const tensShape = {
+      x: this.scoreTensX,
+      y: this.scoreTensY,
+      width: SheetData.Number.width,
+      height: SheetData.Number.height,
+      center: { x: this.scoreTensX + SheetData.Number.width / 2, y: this.scoreTensY + SheetData.Number.height / 2 },
+    };
+    const digit2 = this.getDigitAt(GameProps.score, 1)
+    const tensSprite = {
+      index: digit2,       
+      spi: SheetData.Number,
+      shape: tensShape,
+      rotation: 0,
+      alpha: this.#baitScoreAlpha,
+      center: tensShape.center,
+    };
 
+    const hundredsShape = {
+      x: this.scoreHundredX,
+      y: this.scoreHundredY,
+      width: SheetData.Number.width,
+      height: SheetData.Number.height,
+      center: { x: this.scoreHundredX + SheetData.Number.width / 2, y: this.scoreHundredY + SheetData.Number.height / 2 },
+    };
+    const digit3 = this.getDigitAt(GameProps.score, 2)
+    const hundredsSprite = {
+      index: digit3,       
+      spi: SheetData.Number,
+      shape: hundredsShape,
+      rotation: 0,
+      alpha: this.#baitScoreAlpha,
+      center: hundredsShape.center,
+    };
+
+
+    const thousandsShape = {
+      x: this.scoreThousandsX,
+      y: this.scoreThousandsY,
+      width: SheetData.Number.width,
+      height: SheetData.Number.height,
+      center: { x: this.scoreThousandsX + SheetData.Number.width / 2, y: this.scoreThousandsY + SheetData.Number.height / 2 },
+    };
+    const digit4 = this.getDigitAt(GameProps.score, 3)
+    const thousandsSprite = {
+      index: digit4,       
+      spi: SheetData.Number,
+      shape: thousandsShape,
+      rotation: 0,
+      alpha: this.#baitScoreAlpha,
+      center: thousandsShape.center,
+    };
+
+    this.#spcvs.drawSprite(thousandsSprite);
+    this.#spcvs.drawSprite(hundredsSprite);
+    this.#spcvs.drawSprite(tensSprite);
+    this.#spcvs.drawSprite(onesSprite);
+    
   }
   // To modify alpha through different game states
    setBaitScoreAlpha(alpha) {
   this.#baitScoreAlpha = alpha;
   }
-  // To relocate BaitScore for game over screen
-  relocateBaitScore(){
-  
-  }
+
   // Start Menu
   drawStartMenu(){
 
@@ -203,7 +277,8 @@ export class TMenu  {
 
     this.#spcvs.drawSprite(aSprite);
   }
-  // i used this to find coords for homebtn and retrybtn
+  // i used this to find coords for homebtn and retrybtn then commented it 
+  // out since the buttons are already visible in the gameover sprite 
   drawHome(){
     const shape = {
       x: this.HomeX,
