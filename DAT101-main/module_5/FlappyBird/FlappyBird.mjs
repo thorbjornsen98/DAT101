@@ -101,6 +101,13 @@ function drawObstacles(){
   }
 }
 
+function drawBait() {
+  for (let i = 0; i < GameProps.baits.length; i++) {
+    const bait = GameProps.baits[i];
+    bait.draw();
+  }
+}
+
 function animateGame(){
   GameProps.ground.translate(-GameProps.speed, 0);
   if(GameProps.ground.posX <= -SpriteInfoList.background.width){
@@ -134,7 +141,6 @@ function checkCollisions() {
     // Check if hero passed obstacle (for scoring)
     if (!obstacle.passed && GameProps.hero.pos.x > obstacle.posX + obstacle.width) {
       obstacle.passed = true;
-      GameProps.menu.incScore(1);
     }
   }
   
@@ -146,39 +152,39 @@ function spawnObstacle() {
   if (GameProps.status === EGameStatus.playing) {
     const obstacle = new TObstacle(spcvs, SpriteInfoList.obstacle);
     GameProps.obstacles.push(obstacle);
-    setTimeout(spawnObstacle, 2000); // Correct reference here as well
+    setTimeout(spawnObstacle, 2000); 
   }
 }
 
 function startGame() {
-  // Set the game status to 'playing' and reset the menu
-  GameProps.status = EGameStatus.playing;
-  GameProps.menu.reset();  // Reset any menu-related states
   
-  // Reset the hero's position to the starting point
+  GameProps.status = EGameStatus.playing;
+  GameProps.menu.reset(); 
+  
+  // Reset the hero position to the starting point
   GameProps.hero.pos.x = 100;
   GameProps.hero.pos.y = 150;
 
-  // Reset the obstacles array (clear any previously spawned obstacles)
+  // Reset the obstacles
   GameProps.obstacles = [];
 
-  // Reset the score in the menu and game state
+  // Reset the score 
   GameProps.score = 0;
-  GameProps.menu.incScore(0);  // Assuming `incScore` is a method to update the score in the menu
+
 
   // Start spawning obstacles
   spawnObstacle();
 
-  // Clear the canvas and re-draw all game elements
+  // Clear the canvas and game elements
   spcvs.clearCanvas();
   GameProps.background.draw();
   GameProps.ground.draw();
   GameProps.hero.draw();
 
-  // Start the game loop with requestAnimationFrame
+  // Start the game loop
   requestAnimationFrame(drawGame);
   
-  // Optionally, set up the game animation interval
+  //set up the game animation interval
   setInterval(animateGame, 10);
   
   console.log("Game has started!");
